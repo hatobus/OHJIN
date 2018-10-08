@@ -10,4 +10,3 @@ Using
     - go-xorm
 - DB
     - MySQL
-
