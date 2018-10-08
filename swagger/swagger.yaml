@@ -1,0 +1,55 @@
+---
+swagger: '2.0'
+info:
+  version: 0.0.0
+  title: Smartagri API Server
+host : localhost:8686
+basePath: /v1/agri
+paths:
+  /single/{machineNO}:
+    get:
+      summary: return one data
+      description: |
+        To return latest one record from ${machineNO}
+      parameters: 
+        - 
+          name: "machineNO"
+          description: machineNO must be 1 or 2 or 3.
+          in: "path"
+          required: true
+          type: "integer"
+      responses:
+        200:
+          description: "Successfuly"
+          schema:
+            title: FarmData
+            type: object
+              
+  /multiple/{machineNO}/{limit}:
+    get:
+      description: |
+        To return some record from ${machineNO}
+      parameters:
+        -
+          name: "machineNO"
+          description: machineNO must be 1 or 2 or 3.
+          in:   "path"
+          required: true
+          type: "integer"
+          
+        -
+          name: "limit"
+          description:  Min 1, Max 100, Default value is 5. 
+          in:   "path"
+          required: true
+          type: "integer"
+      
+      responses:
+        200:
+          description: "ok"
+          schema:
+              title: FarmDataSets
+              type: array
+              items:
+                title: FarmData
+                type: object
