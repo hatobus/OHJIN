@@ -1,0 +1,202 @@
+---
+swagger: '2.0'
+info:
+  version: "1.0.0"
+  title: Smartagri API Server
+host : localhost:8686
+basePath: /v1/agri
+paths:
+  /single:
+    get:
+      tags:
+      - Get from DB
+      summary: return one data
+      description: |
+        One record input/output
+      parameters: 
+        - 
+          name: "machineNO"
+          description: machineNO must be 1 or 2 or 3.
+          in: query
+          required: true
+          type: "integer"
+      responses:
+        200:
+          description: "Successfuly"
+          schema:
+              $ref: "#/definitions/FarmData"
+        400:
+          description: "Invalid Machine No status is false and other value is all null"
+          schema:
+            $ref: "#/definitions/FarmData"
+    
+    post:
+      tags:
+      - IoT device post 
+      summary: Post One record from IoT device
+      description:
+        IoT value Get and save DB
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: "#/definitions/IoTData"
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/IoT.Message"
+            
+        500:
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/IoT.Message"
+      
+
+  /multiple/deviceID/{machineNO}:
+    get:
+      tags:
+      - Get from DB
+      description: |
+        To return some record from ${machineNO}
+      parameters:
+        -
+          name: "machineNO"
+          description: machineNO must be 1 or 2 or 3.
+          in:   "path"
+          required: true
+          type: "integer"
+          
+        -
+          name: "limit"
+          description:  Min 1, Max 100, Default value is 5. 
+          in:   query
+          required: false
+          type: "integer"
+      
+      responses:
+        200:
+          description: "ok"
+          schema:
+              title: FarmDataSets
+              type: array
+              items:
+                $ref: "#/definitions/FarmData"
+                
+  /multiple/time/{machineNO}:
+    get:
+      tags:
+      - Get from DB
+      description: |
+        To return some record orderd time
+      parameters:
+        -
+          name: "machineNO"
+          description: machineNO must be 1 or 2 or 3.
+          in:   "path"
+          required: true
+          type: "integer"
+          
+        -
+          in: body
+          name: "timerange"
+          required: true
+          schema:
+            $ref: "#/definitions/Timerange"
+      
+      responses:
+        200:
+          description: "ok"
+          schema:
+              title: FarmDataSets
+              type: array
+              items:
+                $ref: "#/definitions/FarmData"
+                              
+        
+definitions:
+  IoTData:
+    type: object
+    properties:
+        no:
+          type: string
+          example: "1"
+        temperture:
+          type: string
+          exsample: "20.5"
+        humidity:
+          type: string
+          example: "65.4"
+        soil_humidity:
+          type: string
+          example: "87.6"
+        co2_concentration:
+          type: string
+          example:  "123.4"
+        wavelength:
+          type: string
+          example:  "2345.67"
+        illuminance:
+          type: string
+          example:  "12.34"
+          
+  FarmData:
+    type: object
+    properties:
+        status:
+          type: boolean
+          example: true
+        no:
+          type: string
+          example: "1"
+        date:
+          type: string
+          example: "2018\/10\/09"
+        time:
+          type: string
+          example: "12:34:56"
+        temperture:
+          type: string
+          example: "20.5"
+        humidity:
+          type: string
+          example: "65.4"
+        soil_humidity:
+          type: string
+          example: "87.6"
+        co2_concentration:
+          type: string
+          example:  "123.4"
+        wavelength:
+          type: string
+          example:  "2345.67"
+        illuminance:
+          type: string
+          example:  "12.34"
+          
+  IoT.Message:
+    type: object
+    properties:
+      status:
+        type: boolean
+        example: true
+      message:
+        type: string
+        example: "DB stored!"
+      
+  Timerange:
+    type: object
+    properties:
+      start:
+        type: "timestamp"
+        example: "2018/06/30 12:34:56"
+      end:
+        type: "timestamp"
+        example: "2018/07/02 12:34:56"
+      limit:
+        type: integer
+        exsample: 10
+  
