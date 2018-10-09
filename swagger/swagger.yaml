@@ -56,7 +56,7 @@ paths:
             $ref: "#/definitions/IoT.Message"
       
 
-  /multiple:
+  /multiple/deviceID/{machineNO}:
     get:
       tags:
       - Get from DB
@@ -86,6 +86,37 @@ paths:
               items:
                 $ref: "#/definitions/FarmData"
                 
+  /multiple/time/{machineNO}:
+    get:
+      tags:
+      - Get from DB
+      description: |
+        To return some record orderd time
+      parameters:
+        -
+          name: "machineNO"
+          description: machineNO must be 1 or 2 or 3.
+          in:   "path"
+          required: true
+          type: "integer"
+          
+        -
+          in: body
+          name: "timerange"
+          required: true
+          schema:
+            $ref: "#/definitions/Timerange"
+      
+      responses:
+        200:
+          description: "ok"
+          schema:
+              title: FarmDataSets
+              type: array
+              items:
+                $ref: "#/definitions/FarmData"
+                              
+        
 definitions:
   IoTData:
     type: object
@@ -155,3 +186,17 @@ definitions:
       message:
         type: string
         example: "DB stored!"
+      
+  Timerange:
+    type: object
+    properties:
+      start:
+        type: "timestamp"
+        example: "2018/06/30 12:34:56"
+      end:
+        type: "timestamp"
+        example: "2018/07/02 12:34:56"
+      limit:
+        type: integer
+        exsample: 10
+  
