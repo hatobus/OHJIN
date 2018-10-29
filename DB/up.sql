@@ -1,4 +1,4 @@
-DRO TABLE IF EXISTS `iotdata`;
+DROP TABLE IF EXISTS `iotdata`;
 
 CREATE TABLE `iotdata` (
     `no` int(11) unsigned NOT NULL AUTO_INCREMENT,
