@@ -59,3 +59,21 @@ func RetSingleIoTData(ID string) (*models.Iotdata, error) {
 
 	return ret, nil
 }
+
+func RetMultiIoTData(ID string, num int) (*[]models.Iotdata, error) {
+	envLoad()
+
+	ret := &[]models.Iotdata{}
+
+	engine, err := setupEngine()
+	if err != nil {
+		return ret, err
+	}
+
+	err = engine.Where("machineid = ?", ID).Desc("no").Limit(num, 0).Find(ret)
+	if err != nil {
+		return ret, err
+	}
+
+	return ret, err
+}
