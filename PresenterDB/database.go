@@ -25,6 +25,7 @@ func setupEngine() (*xorm.Engine, error) {
 
 	engine, err := xorm.NewEngine(os.Getenv("dbName"), os.Getenv("dataSourceName"))
 	if err != nil {
+		log.Println(err)
 		panic(err)
 	}
 
@@ -36,7 +37,7 @@ func StoreSingleIoTData(d *models.Iotdata) (int64, error) {
 	engine, err := setupEngine()
 	spew.Dump(err)
 
-	affected, err := engine.Insert(&d)
+	affected, err := engine.Insert(d)
 	if err != nil {
 		return affected, err
 	}

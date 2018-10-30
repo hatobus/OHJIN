@@ -49,6 +49,7 @@ func singleGET(c *gin.Context) {
 	res, err := PresenterDB.RetSingleIoTData(machineNo)
 
 	if err != nil {
+		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"Message": "DBError",
 		})
