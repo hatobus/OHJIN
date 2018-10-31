@@ -1,6 +1,7 @@
+CREATE DATABASE IF NOT EXISTS smartagri;
 DROP TABLE IF EXISTS `iotdata`;
 
-CREATE TABLE `iotdata` (
+CREATE TABLE `iotdata`(
     `no` int(11) unsigned NOT NULL AUTO_INCREMENT,
     `machineid` varchar(3) NOT NULL,
     `gettime` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
