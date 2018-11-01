@@ -1,10 +1,10 @@
 package main
 
 import (
+	"errors"
 	"log"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/hatobus/ServerSmartAgri/PresenterDB"
 
@@ -15,20 +15,30 @@ import (
 	"github.com/hatobus/ServerSmartAgri/models"
 )
 
+var (
+	ErrBadParameter = errors.New("Bad Parameter type")
+	ErrInvalidJSON  = errors.New("Couldn't parse JSON")
+)
+
 type singleGetParameter struct {
 	machine string `validate:"required"`
 }
 
-type multipleGetParameter struct {
+type multipleGetParameterWithDevice struct {
 	machine string `validate:"required"`
 	reqnum  int    `validate:"required, max=100,min=1"`
+}
+
+type multipleGetParameterWithTime struct {
+	machine string `validate:"required"`
 }
 
 func main() {
 	r := gin.Default()
 	r.POST("/single", singlePOST)
 	r.GET("/single/:machine", singleGET)
-	r.POST("/multiple/:machine/:num", multiGET)
+	r.POST("/multiple/device/:machine/:num", multiGETWithDevice)
+	r.POST("/multiple/time/:machine", multiGETWithTime)
 	r.Run()
 }
 
@@ -39,11 +49,10 @@ func singlePOST(c *gin.Context) {
 	err := c.BindJSON(iot)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"Message": "Bad Request",
+			"Message": ErrInvalidJSON,
+			"Data":    iot,
 		})
 	}
-
-	iot.Gettime = time.Now()
 
 	spew.Dump(iot)
 
@@ -73,7 +82,8 @@ func singleGET(c *gin.Context) {
 	if err := v.Struct(s); err != nil {
 		log.Println("Illigal parameter")
 		c.JSON(http.StatusBadRequest, gin.H{
-			"Message": "Bad parameter type",
+			"Message": ErrBadParameter,
+			"Data":    res,
 		})
 		return
 	}
@@ -92,7 +102,7 @@ func singleGET(c *gin.Context) {
 	})
 }
 
-func multiGET(c *gin.Context) {
+func multiGETWithDevice(c *gin.Context) {
 	v := validator.New()
 
 	res := &[]models.Iotdata{}
@@ -100,12 +110,12 @@ func multiGET(c *gin.Context) {
 	r, err := strconv.Atoi(c.Param("num"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"Message": "Illigal parameter",
+			"Message": ErrBadParameter,
 		})
 		return
 	}
 
-	m := multipleGetParameter{
+	m := multipleGetParameterWithDevice{
 		machine: c.Param("machine"),
 		reqnum:  r,
 	}
@@ -113,7 +123,7 @@ func multiGET(c *gin.Context) {
 	if err := v.Struct(m); err != nil {
 		log.Println("Illigal parameter")
 		c.JSON(http.StatusBadRequest, gin.H{
-			"Message": "Bad parameter type",
+			"Message": ErrBadParameter,
 			"Data":    res,
 		})
 		return
@@ -129,7 +139,37 @@ func multiGET(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"Message": "Find " + c.Param("num") + " records",
+		"Message": "Found " + c.Param("num") + " records",
 		"Data":    res,
 	})
+}
+
+func multiGETWithTime(c *gin.Context) {
+	v := validator.New()
+
+	res := &[]models.Iotdata{}
+
+	m := multipleGetParameterWithTime{
+		machine: c.Param("machine"),
+	}
+
+	if err := v.Struct(m); err != nil {
+		log.Println("Illigal parameter")
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Message": ErrBadParameter,
+			"Data":    res,
+		})
+	}
+
+	rt := &models.ReqestTimestamp{}
+
+	err := c.BindJSON(rt)
+	if err != nil {
+		log.Println("Couldn't Bind JSON")
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Message": ErrInvalidJSON,
+			"Data":    res,
+		})
+	}
+
 }
