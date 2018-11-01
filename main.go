@@ -38,8 +38,8 @@ func main() {
 	r := gin.Default()
 	r.POST("/single", singlePOST)
 	r.GET("/single/:machine", singleGET)
-	r.POST("/multiple/device/:machine/:num", multiGETWithDevice)
-	r.POST("/multiple/time/:machine", multiGETWithTime)
+	r.GET("/multiple/device/:machine/:num", multiGETWithDevice)
+	r.GET("/multiple/time/:machine", multiGETWithTime)
 	r.Run()
 }
 
