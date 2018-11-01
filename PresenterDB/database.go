@@ -77,3 +77,27 @@ func RetMultiIoTData(ID string, num int) (*[]models.Iotdata, error) {
 
 	return ret, err
 }
+
+func RetMultiIoTDataFromTime(ID string, d *models.ReqestTimestamp) (*[]models.Iotdata, error) {
+	envLoad()
+
+	ret := &[]models.Iotdata{}
+
+	engine, err := setupEngine()
+	if err != nil {
+		return ret, err
+	}
+
+	err = engine.Where("machineis = ?", ID).
+		And("gettime >= ?", d.Start).
+		And("gettime <= ?", d.End).
+		Desc("no").
+		Limit(d.Limit).
+		Find(ret)
+
+	if err != nil {
+		return ret, err
+	}
+
+	return ret, nil
+}

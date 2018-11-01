@@ -1,8 +1,10 @@
-# SmartagriServer
+# OHJIN
 
 ![server](./pic/logo.png)
 
 ## Smartagri Server
+
+OHJIN is Server in Smartagri.
 
 Using
 - Golang

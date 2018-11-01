@@ -31,6 +31,7 @@ type multipleGetParameterWithDevice struct {
 
 type multipleGetParameterWithTime struct {
 	machine string `validate:"required"`
+	reqnum  int    `validate:"required"`
 }
 
 func main() {
@@ -149,18 +150,6 @@ func multiGETWithTime(c *gin.Context) {
 
 	res := &[]models.Iotdata{}
 
-	m := multipleGetParameterWithTime{
-		machine: c.Param("machine"),
-	}
-
-	if err := v.Struct(m); err != nil {
-		log.Println("Illigal parameter")
-		c.JSON(http.StatusBadRequest, gin.H{
-			"Message": ErrBadParameter,
-			"Data":    res,
-		})
-	}
-
 	rt := &models.ReqestTimestamp{}
 
 	err := c.BindJSON(rt)
@@ -170,6 +159,34 @@ func multiGETWithTime(c *gin.Context) {
 			"Message": ErrInvalidJSON,
 			"Data":    res,
 		})
+		return
 	}
 
+	m := multipleGetParameterWithTime{
+		machine: c.Param("machine"),
+		reqnum:  rt.Limit,
+	}
+
+	if err := v.Struct(m); err != nil {
+		log.Println("Illigal parameter")
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Message": ErrBadParameter,
+			"Data":    res,
+		})
+		return
+	}
+
+	res, err = PresenterDB.RetMultiIoTDataFromTime(m.machine, rt)
+	if err != nil {
+		log.Println("DB Error")
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"Message": err,
+			"Data":    res,
+		})
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"Message": "Found",
+		"Data":    res,
+	})
 }
