@@ -13,4 +13,6 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
-
+.env
+./DB/mysql
+./DB/ib_buffer_pool
