@@ -6,13 +6,13 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/hatobus/ServerSmartAgri/PresenterDB"
+	"github.com/hatobus/OHJIN/PresenterDB"
 
 	"gopkg.in/go-playground/validator.v9"
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/gin-gonic/gin"
-	"github.com/hatobus/ServerSmartAgri/models"
+	"github.com/hatobus/OHJIN/models"
 )
 
 var (

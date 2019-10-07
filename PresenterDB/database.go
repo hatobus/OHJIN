@@ -7,7 +7,7 @@ import (
 	"github.com/davecgh/go-spew/spew"
 
 	"github.com/go-xorm/xorm"
-	"github.com/hatobus/ServerSmartAgri/models"
+	"github.com/hatobus/OHJIN/models"
 	"github.com/joho/godotenv"
 
 	_ "github.com/go-sql-driver/mysql"
